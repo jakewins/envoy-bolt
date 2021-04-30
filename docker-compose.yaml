@@ -1,0 +1,36 @@
+version: '2'
+services:
+
+  proxy:
+    build:
+      context: ./envoy
+      dockerfile: Dockerfile.proxy
+    volumes:
+      - ./envoy/envoy-tcp.yaml:/etc/envoy.yaml
+      - ./target/wasm32-unknown-unknown/release/myenvoyfilter.wasm:/etc/bolt.wasm
+    networks:
+      - envoymesh
+    expose:
+      - "7688"
+      - "8001"
+    ports:
+      - "17688:7688"
+      - "18001:8001"
+
+  neo4j_core:
+    image: neo4j
+    environment: 
+      NEO4J_AUTH: "neo4j/secret"
+    networks:
+      envoymesh:
+        aliases:
+        - neo4j
+    expose:
+    - "7687"
+    - "7474"
+    ports:
+    - "17474:7474"
+    - "17687:7687"
+
+networks:
+  envoymesh: {}

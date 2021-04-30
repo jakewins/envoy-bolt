@@ -1,0 +1,46 @@
+
+static_resources:
+  listeners:
+  - name: main
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 7688
+    filter_chains:
+    
+    - filters:
+      - name: envoy.filters.network.wasm
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
+          config:
+            name: "bolt"
+            vm_config:
+              runtime: "envoy.wasm.runtime.v8"
+              code:
+                local:
+                  filename: "/etc/bolt.wasm"
+              allow_precompiled: true
+      - name: envoy.tcp_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+          stat_prefix: tcp
+          cluster: neo4j
+  clusters:
+  - name: neo4j
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    load_assignment:
+      cluster_name: neo4j
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: 
+                address: neo4j
+                port_value: 7687
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001

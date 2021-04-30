@@ -1,0 +1,15 @@
+[package]
+name = "envoy-bolt"
+version = "0.1.0"
+authors = ["Jacob Davis-Hansson <jakewins@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "myenvoyfilter"
+crate-type = ["cdylib"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+proxy-wasm = { git = "https://github.com/proxy-wasm/proxy-wasm-rust-sdk.git", rev = "a30f30c7697fbdfa3ca7dd48c8d088ac71c06ea9" }
+log = "0.4"
+primes = "0.3.0"
